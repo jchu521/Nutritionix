@@ -4,11 +4,9 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import InputBase from "@material-ui/core/InputBase";
 import Paper from "@material-ui/core/Paper";
-import { fade, makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import SearchIcon from "@material-ui/icons/Search";
-import LeftIcon from "@material-ui/icons/KeyboardArrowLeft";
-import RightIcon from "@material-ui/icons/KeyboardArrowRight";
-import Grid from "@material-ui/core/Grid";
+
 import _ from "lodash";
 
 import SearchItems from "../searchItems/SearchItems";
@@ -18,11 +16,19 @@ import {
   getCommonFoodDetails,
   getBrandedFoodDetails
 } from "../../apis/nutritionix";
-import { IconButton } from "@material-ui/core";
+import { Hidden } from "@material-ui/core";
 import { useStateValue } from "../../mockData/index";
 import Divider from "@material-ui/core/Divider";
+import SelectDate from "../selectDate/SelectDate";
+import UserBasicInfo from "../userBasicInfo/UserBasicInfo";
+import Avatar from "@material-ui/core/Avatar";
+import Photo from "../../static/Jonathan_Chueh.jpg";
+import Grid from "@material-ui/core/Grid";
 
 const useStyles = makeStyles(theme => ({
+  appBar: {
+    backgroundColor: "#6200ee"
+  },
   menuButton: {
     marginRight: theme.spacing(2)
   },
@@ -34,14 +40,13 @@ const useStyles = makeStyles(theme => ({
     }
   },
   search: {
+    backgroundColor: "white",
     position: "relative",
     borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.common.white, 0.15),
-    "&:hover": {
-      backgroundColor: fade(theme.palette.common.white, 0.25)
-    },
     marginLeft: 0,
     width: "100%",
+    height: 48,
+    textAlign: "center",
     [theme.breakpoints.up("sm")]: {
       marginLeft: theme.spacing(1),
       width: "auto"
@@ -57,12 +62,19 @@ const useStyles = makeStyles(theme => ({
     justifyContent: "center"
   },
   inputRoot: {
-    color: "inherit"
+    height: "100%",
+    color: "black",
+    width: 352
   },
   inputInput: {
     padding: theme.spacing(1, 1, 1, 7),
+    color: "black",
     transition: theme.transitions.create("width"),
-    width: "100%"
+    width: "100%",
+    "&::placeholder": {
+      fontWeight: "bold",
+      color: "black"
+    }
   },
   iconButton: {
     color: "white"
@@ -72,6 +84,18 @@ const useStyles = makeStyles(theme => ({
       fontSize: 16,
       margin: "auto"
     }
+  },
+  avatar: {
+    textAlign: "center",
+    display: "flex",
+    flexDirection: "column",
+    width: 56,
+    height: 56,
+    backgroundColor: "#300076",
+    margin: 4
+  },
+  avatarText: {
+    fontSize: 12
   }
 }));
 
@@ -82,7 +106,6 @@ export default function Header() {
   const [searchText, setSearchText] = useState("");
   const [foods, setFoods] = useState(null);
   const [food, setFood] = useState(null);
-  const [dateIndex, setDateIndex] = useState(0);
 
   const searchItemRef = useRef(null);
 
@@ -166,104 +189,86 @@ export default function Header() {
     setOpen(false);
   };
 
-  const handleChangeDate = value => {
-    if (value > 0) {
-      if (dateIndex !== user.data_points.length - 1) {
-        setDateIndex(dateIndex + value);
-        dispatch({
-          type: "updateSelectDate",
-          payload: user.data_points[dateIndex + value].date
-        });
-      }
-    } else {
-      if (dateIndex !== 0) {
-        setDateIndex(dateIndex + value);
-        dispatch({
-          type: "updateSelectDate",
-          payload: user.data_points[dateIndex + value].date
-        });
-      }
-    }
-  };
   return (
-    <AppBar position="static">
+    <AppBar position="static" className={classes.appBar}>
       <Modal open={open} food={food} onClose={handleClose} />
       <Toolbar>
-        <Typography className={classes.title} variant="h6">
-          Nutritionix
-        </Typography>
-        <div className={classes.search}>
-          <div className={classes.searchIcon}>
-            <SearchIcon />
-          </div>
-          <InputBase
-            placeholder="Search…"
-            classes={{
-              root: classes.inputRoot,
-              input: classes.inputInput
-            }}
-            inputProps={{ "aria-label": "search" }}
-            value={searchText}
-            onChange={handleSearchInput}
-          />
-          {foods ? (
-            <Paper
-              ref={searchItemRef}
-              style={{
-                width: "100%",
-                position: "absolute",
-                marginTop: 10,
-                zIndex: 999
-              }}>
-              <SearchItems
-                foods={foods.common}
-                onClick={handleGetCommonFood}
-                maxDisplay="5"
-                title="common"
-              />
-              <Divider />
-              <SearchItems
-                foods={foods.branded}
-                onClick={handleGetBrandedFood}
-                maxDisplay="5"
-                title="branded"
-                subText={true}
-              />
-            </Paper>
-          ) : (
-            ""
-          )}
-        </div>
-      </Toolbar>
-      <Toolbar>
         <Grid container justify="center" alignItems="center">
-          <Grid item xs={4}></Grid>
-          <Grid
-            item
-            xs={4}
-            style={{
-              textAlign: "center",
-              display: "flex",
-              justifyContent: "space-between"
-            }}>
-            <IconButton
-              className={classes.iconButton}
-              onClick={() => handleChangeDate(1)}>
-              <LeftIcon />
-            </IconButton>
-            <Typography variant="h4" className={classes.dateText}>
-              {user.data_points[dateIndex].date}
-            </Typography>
-            <IconButton
-              size="medium"
-              className={classes.iconButton}
-              onClick={() => handleChangeDate(-1)}>
-              <RightIcon />
-            </IconButton>
+          <Grid item xs={12} sm={5}>
+            <div className={classes.search}>
+              <div className={classes.searchIcon}>
+                <SearchIcon color="action" />
+              </div>
+              <InputBase
+                placeholder="Search foods..."
+                classes={{
+                  root: classes.inputRoot,
+                  input: classes.inputInput
+                }}
+                inputProps={{
+                  "aria-label": "Search foods..."
+                }}
+                value={searchText}
+                onChange={handleSearchInput}
+              />
+              {foods ? (
+                <Paper
+                  ref={searchItemRef}
+                  style={{
+                    width: "100%",
+                    position: "absolute",
+                    marginTop: 10,
+                    zIndex: 999
+                  }}>
+                  <SearchItems
+                    foods={foods.common}
+                    onClick={handleGetCommonFood}
+                    maxDisplay="5"
+                    title="common"
+                  />
+                  <Divider />
+                  <SearchItems
+                    foods={foods.branded}
+                    onClick={handleGetBrandedFood}
+                    maxDisplay="5"
+                    title="branded"
+                    subText={true}
+                  />
+                </Paper>
+              ) : (
+                ""
+              )}
+            </div>
           </Grid>
-          <Grid item xs={4}></Grid>
         </Grid>
       </Toolbar>
+      <Hidden xsDown>
+        <SelectDate />
+      </Hidden>
+      <Hidden smUp>
+        <UserBasicInfo style={{ padding: 12 }} justify="space-between">
+          <Grid item sm={8}>
+            <Grid container justify="flex-start" alignItems="center">
+              <Avatar className={classes.avatar} src={Photo} />
+              <Typography style={{ paddingLeft: 10 }} variant="h6">
+                {user.first_name}
+              </Typography>
+            </Grid>
+          </Grid>
+          <Grid item sm={4}>
+            <Grid container alignItems="flex-end">
+              <Avatar className={classes.avatar}>
+                <span>{user.weight_kg}</span>
+                <span className={classes.avatarText}>kg</span>
+              </Avatar>
+              <Avatar className={classes.avatar}>
+                <span>{user.height_cm}</span>
+                <span className={classes.avatarText}>cm</span>
+              </Avatar>
+            </Grid>
+          </Grid>
+        </UserBasicInfo>
+      </Hidden>
     </AppBar>
   );
 }

@@ -37,7 +37,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function Modal({ food, onClose, open }) {
   const classes = useStyles();
-  const [{ user }, dispatch] = useStateValue();
+  const [, dispatch] = useStateValue();
   const [loading, setLoading] = useState(true);
   const [serve, setServe] = useState(1);
   const [calories, setSCalories] = useState(0);

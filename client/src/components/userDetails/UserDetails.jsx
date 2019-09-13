@@ -1,32 +1,43 @@
 import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-import Avatar from "@material-ui/core/Avatar";
 import Divider from "@material-ui/core/Divider";
 import LinearProgress from "@material-ui/core/LinearProgress";
 /** @jsx jsx */
 import { jsx, css } from "@emotion/core";
 import { useStateValue } from "../../mockData/index";
 import Typography from "@material-ui/core/Typography";
+
+import UserBasicInfo from "../userBasicInfo/UserBasicInfo";
+import SelectDate from "../selectDate/SelectDate";
+import { Hidden } from "@material-ui/core";
+
+import Avatar from "@material-ui/core/Avatar";
 import Photo from "../../static/Jonathan_Chueh.jpg";
 
 const useStyles = makeStyles(theme => ({
   userSection: {
-    padding: 20
+    backgroundColor: "#f5f5f5",
+    height: "100%"
   },
   smallAvatar: {
+    backgroundColor: "#7a7a7a",
     textAlign: "center",
     display: "flex",
     flexDirection: "column",
-    width: 60,
-    height: 60
+    width: 56,
+    height: 56
   },
   avatarText: {
     fontSize: 12
   },
+  name: {
+    textAlign: "center",
+    paddingTop: 12
+  },
   largeAvatar: {
-    width: 120,
-    height: 120,
+    width: 96,
+    height: 96,
     [theme.breakpoints.down("sm")]: {
       width: 100,
       height: 100
@@ -66,7 +77,7 @@ export default function UserDetails() {
     if (dateDetails.intake_list.length === 0) {
       setDetails(initialDetails);
     } else {
-      dateDetails.intake_list.map(item => {
+      dateDetails.intake_list.forEach(item => {
         if (item.meal_type === "breakfast") {
           breakfastCal += Math.round(item.serving_size * item.nf_calories);
           totalCal += breakfastCal;
@@ -103,37 +114,49 @@ export default function UserDetails() {
   }, [user]);
 
   return (
-    <Grid container className={classes.userSection} spacing={3}>
-      <Grid item xs={12}>
-        <Grid container justify="space-evenly" alignItems="center">
-          <Avatar className={classes.smallAvatar}>
-            <span>{user.weight_kg}</span>
-            <span className={classes.avatarText}>kg</span>
-          </Avatar>
-          <Avatar className={classes.largeAvatar} src={Photo} />
-          <Avatar className={classes.smallAvatar}>
-            <span>{user.height_cm}</span>
-            <span className={classes.avatarText}>cm</span>
-          </Avatar>
+    <Grid container justify="space-evenly" className={classes.userSection}>
+      <Hidden xsDown>
+        <Grid item xs={12} style={{ marginTop: 24 }}>
+          <UserBasicInfo justify="space-evenly">
+            <Avatar className={classes.smallAvatar}>
+              <span>{user.weight_kg}</span>
+              <span className={classes.avatarText}>kg</span>
+            </Avatar>
+            <Avatar className={classes.largeAvatar} src={Photo} />
+            <Avatar className={classes.smallAvatar}>
+              <span>{user.height_cm}</span>
+              <span className={classes.avatarText}>cm</span>
+            </Avatar>
+            <Grid item xs={12} className={classes.name}>
+              <Typography variant="h5">
+                {user.first_name} {user.last_name}
+              </Typography>
+            </Grid>
+          </UserBasicInfo>
         </Grid>
-      </Grid>
-      <Grid item xs={12} style={{ textAlign: "center" }}>
-        {user.first_name} {user.last_name}
-      </Grid>
-      <Grid item xs={12}>
-        <Divider />
-      </Grid>
-      <Grid item xs={12}>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <Hidden smUp>
+          <SelectDate />
+        </Hidden>
+        <Grid item xs={12} style={{ paddingTop: 16 }}>
+          <Divider />
+        </Grid>
+      </Hidden>
+
+      <Grid item xs={12} style={{ padding: "24px 16px 0px 16px" }}>
+        <Grid container justify="space-between">
           <Typography variant="h5">{details.totalCal} cal</Typography>
           <Typography variant="h5">{user.daily_goal} cal</Typography>
-        </div>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <span>consumed</span>
-          <span>daily goal</span>
-        </div>
+        </Grid>
+        <Grid container justify="space-between">
+          <Typography color="textSecondary" variant="caption">
+            consumed
+          </Typography>
+          <Typography color="textSecondary" variant="caption">
+            daily goal
+          </Typography>
+        </Grid>
       </Grid>
-      <Grid item xs={12}>
+      <Grid item xs={12} style={{ padding: "8px 16px" }}>
         <LinearProgress variant="determinate" value={details.dailyPercentage} />
         <div
           css={css`
