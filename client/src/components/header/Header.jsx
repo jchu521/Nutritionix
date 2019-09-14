@@ -39,6 +39,16 @@ const useStyles = makeStyles(theme => ({
       display: "block"
     }
   },
+  searchList: {
+    width: "100%",
+    position: "absolute",
+    marginTop: 10,
+    zIndex: 999,
+    [theme.breakpoints.down("xs")]: {
+      maxHeight: "90vh",
+      overflowY: "scroll"
+    }
+  },
   search: {
     backgroundColor: "white",
     position: "relative",
@@ -64,7 +74,7 @@ const useStyles = makeStyles(theme => ({
   inputRoot: {
     height: "100%",
     color: "black",
-    width: 352
+    width: "100%"
   },
   inputInput: {
     padding: theme.spacing(1, 1, 1, 7),
@@ -101,7 +111,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function Header() {
   const classes = useStyles();
-  const [{ user }, dispatch] = useStateValue();
+  const [{ user }] = useStateValue();
   const [open, setOpen] = React.useState(false);
   const [searchText, setSearchText] = useState("");
   const [foods, setFoods] = useState(null);
@@ -191,7 +201,12 @@ export default function Header() {
 
   return (
     <AppBar position="static" className={classes.appBar}>
-      <Modal open={open} food={food} onClose={handleClose} />
+      <Modal
+        open={open}
+        food={food}
+        onClose={handleClose}
+        setSearchText={setSearchText}
+      />
       <Toolbar>
         <Grid container justify="center" alignItems="center">
           <Grid item xs={12} sm={5}>
@@ -212,14 +227,7 @@ export default function Header() {
                 onChange={handleSearchInput}
               />
               {foods ? (
-                <Paper
-                  ref={searchItemRef}
-                  style={{
-                    width: "100%",
-                    position: "absolute",
-                    marginTop: 10,
-                    zIndex: 999
-                  }}>
+                <Paper ref={searchItemRef} className={classes.searchList}>
                   <SearchItems
                     foods={foods.common}
                     onClick={handleGetCommonFood}

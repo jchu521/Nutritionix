@@ -7,10 +7,16 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Avatar from "@material-ui/core/Avatar";
 import { makeStyles } from "@material-ui/core/styles";
 import Divider from "@material-ui/core/Divider";
+import Typography from "@material-ui/core/Typography";
 
 const useStyles = makeStyles(theme => ({
   title: {
-    textTransform: "uppercase"
+    textTransform: "uppercase",
+    float: "left"
+  },
+  resultText: {
+    textTransform: "capitalize",
+    fontWeight: "bold"
   }
 }));
 
@@ -20,9 +26,14 @@ export default function ResultItems({ title, foods, maxDisplay, onClick }) {
   return (
     <List
       component="nav"
+      style={{ overflowY: "scroll" }}
       subheader={
         <ListSubheader className={classes.title} component="div">
-          {title}
+          <Typography
+            variant="caption"
+            style={{ fontWeight: "bold", letterSpacing: 2 }}>
+            {title}
+          </Typography>
         </ListSubheader>
       }>
       {foods.length > 0 ? (
@@ -41,7 +52,9 @@ export default function ResultItems({ title, foods, maxDisplay, onClick }) {
                     />
                   </ListItemAvatar>
                   <ListItemText
-                    primary={item.food_name}
+                    primary={
+                      <div className={classes.resultText}>{item.food_name}</div>
+                    }
                     secondary={item.brand_name}
                   />
                 </ListItem>
@@ -50,6 +63,8 @@ export default function ResultItems({ title, foods, maxDisplay, onClick }) {
                 )}
               </React.Fragment>
             );
+          } else {
+            return null;
           }
         })
       ) : (

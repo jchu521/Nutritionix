@@ -16,9 +16,12 @@ import TextField from "@material-ui/core/TextField";
 import { useStateValue } from "../../mockData/index";
 
 const useStyles = makeStyles(theme => ({
+  paperRoot: {
+    width: 304
+  },
   avatar: {
-    width: 120,
-    height: 120,
+    width: 64,
+    height: 64,
     [theme.breakpoints.down("sm")]: {
       width: 60,
       height: 60
@@ -31,11 +34,12 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.grey[500]
   },
   text: {
-    textAlign: "center"
+    textAlign: "center",
+    textTransform: "capitalize"
   }
 }));
 
-export default function Modal({ food, onClose, open }) {
+export default function Modal({ food, onClose, open, setSearchText }) {
   const classes = useStyles();
   const [, dispatch] = useStateValue();
   const [loading, setLoading] = useState(true);
@@ -73,6 +77,7 @@ export default function Modal({ food, onClose, open }) {
 
     setServe(1);
     setMeal("Breakfast");
+    setSearchText("");
     onClose();
   };
 
@@ -84,7 +89,13 @@ export default function Modal({ food, onClose, open }) {
   };
 
   return (
-    <Dialog open={open} onClose={() => onClose()} fullWidth>
+    <Dialog
+      classes={{
+        paper: classes.paperRoot
+      }}
+      open={open}
+      onClose={() => onClose()}
+      fullWidth>
       {!loading ? (
         <>
           <DialogTitle>
@@ -139,6 +150,10 @@ export default function Modal({ food, onClose, open }) {
                   Calories
                 </Typography>
               </Grid>
+            </Grid>
+          </DialogContent>
+          <DialogActions>
+            <Grid container spacing={2}>
               <Grid item xs={12}>
                 <TextField
                   fullWidth
@@ -160,16 +175,17 @@ export default function Modal({ food, onClose, open }) {
                   ))}
                 </TextField>
               </Grid>
+              <Grid item xs={12}>
+                <Button
+                  style={{ float: "right" }}
+                  onClick={handleAdd}
+                  variant="contained"
+                  color="primary"
+                  autoFocus>
+                  ADD
+                </Button>
+              </Grid>
             </Grid>
-          </DialogContent>
-          <DialogActions>
-            <Button
-              onClick={handleAdd}
-              variant="contained"
-              color="primary"
-              autoFocus>
-              ADD
-            </Button>
           </DialogActions>
         </>
       ) : (

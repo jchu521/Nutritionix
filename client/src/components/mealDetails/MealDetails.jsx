@@ -13,23 +13,31 @@ import Avatar from "@material-ui/core/Avatar";
 const useStyles = makeStyles(theme => ({
   root: {
     width: "100%",
-    backgroundColor: theme.palette.background.paper
+    height: "90vh",
+    overflowY: "scroll",
+    backgroundColor: theme.palette.background.paper,
+    [theme.breakpoints.down("xs")]: {
+      maxHeight: 375,
+      overflowY: "scroll"
+    }
   },
   inline: {
     display: "inline"
+  },
+  capitalize: {
+    textTransform: "capitalize"
   }
 }));
 
 export default function MealDetails() {
-  const classes = useStyles();
-  const [{ user }, dispatch] = useStateValue();
+  const [{ user }] = useStateValue();
   const [mealDetails, setMealDetails] = useState();
+  const classes = useStyles();
 
   useEffect(() => {
     const details = user.data_points.filter(
       item => item.date === user.selectDate
     );
-
     setMealDetails(details[0]);
   }, [user]);
 
@@ -45,9 +53,13 @@ export default function MealDetails() {
               <ListItemText
                 primary={
                   <Grid container justify="space-between">
-                    <Grid item>{list.food_name}</Grid>
                     <Grid item>
-                      {Math.round(list.serving_size * list.nf_calories)} cal
+                      <div style={{ fontWeight: "bold" }}>{list.food_name}</div>
+                    </Grid>
+                    <Grid item>
+                      <div style={{ fontWeight: "bold" }}>
+                        {Math.round(list.serving_size * list.nf_calories)} cal
+                      </div>
                     </Grid>
                   </Grid>
                 }
@@ -60,7 +72,9 @@ export default function MealDetails() {
                       )}{" "}
                       g)
                     </Grid>
-                    <Grid item>{list.meal_type}</Grid>
+                    <Grid item>
+                      <div className={classes.capitalize}>{list.meal_type}</div>
+                    </Grid>
                   </Grid>
                 }
               />

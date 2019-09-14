@@ -11,9 +11,9 @@ import AddIcon from "@material-ui/icons/Add";
 import { StateProvider, initialState, reducer } from "./mockData/index";
 
 const useStyles = makeStyles(theme => ({
-  root: { height: "100%" },
+  root: {},
   body: {
-    height: "100%"
+    // height: "100%"
   },
   fab: {
     position: "absolute",

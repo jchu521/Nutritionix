@@ -11,7 +11,7 @@ import { useStateValue } from "../../mockData/index";
 const useStyles = makeStyles(theme => ({
   iconButton: {
     color: "white",
-    [theme.breakpoints.down("sm")]: {
+    [theme.breakpoints.down("xs")]: {
       color: "#6403ee"
     }
   },
