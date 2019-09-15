@@ -25,6 +25,10 @@ import Avatar from "@material-ui/core/Avatar";
 import Photo from "../../static/Jonathan_Chueh.jpg";
 import Grid from "@material-ui/core/Grid";
 
+import Fab from "@material-ui/core/Fab";
+import AddIcon from "@material-ui/icons/Add";
+import CircularProgress from "@material-ui/core/CircularProgress";
+
 const useStyles = makeStyles(theme => ({
   appBar: {
     backgroundColor: "#6200ee"
@@ -44,10 +48,8 @@ const useStyles = makeStyles(theme => ({
     position: "absolute",
     marginTop: 10,
     zIndex: 999,
-    [theme.breakpoints.down("xs")]: {
-      maxHeight: "90vh",
-      overflowY: "scroll"
-    }
+    maxHeight: "90vh",
+    overflowY: "scroll"
   },
   search: {
     backgroundColor: "white",
@@ -106,6 +108,16 @@ const useStyles = makeStyles(theme => ({
   },
   avatarText: {
     fontSize: 12
+  },
+  fab: {
+    position: "absolute",
+    right: 40,
+    bottom: 40,
+    zIndex: 999,
+    [theme.breakpoints.down("sm")]: {
+      right: 5,
+      bottom: 5
+    }
   }
 }));
 
@@ -117,10 +129,12 @@ export default function Header() {
   const [foods, setFoods] = useState(null);
   const [food, setFood] = useState(null);
 
+  const searchTextRef = useRef(null);
   const searchItemRef = useRef(null);
 
   const handleClickOutside = e => {
     if (searchItemRef.current && !searchItemRef.current.contains(e.target)) {
+      setSearchText("");
       setFoods(null);
     }
   };
@@ -200,83 +214,102 @@ export default function Header() {
   };
 
   return (
-    <AppBar position="static" className={classes.appBar}>
-      <Modal
-        open={open}
-        food={food}
-        onClose={handleClose}
-        setSearchText={setSearchText}
-      />
-      <Toolbar>
-        <Grid container justify="center" alignItems="center">
-          <Grid item xs={12} sm={5}>
-            <div className={classes.search}>
-              <div className={classes.searchIcon}>
-                <SearchIcon color="action" />
+    <>
+      <AppBar position="static" className={classes.appBar}>
+        <Modal
+          open={open}
+          food={food}
+          onClose={handleClose}
+          setSearchText={setSearchText}
+        />
+        <Toolbar>
+          <Grid container justify="center" alignItems="center">
+            <Grid item xs={12} sm={5}>
+              <div className={classes.search}>
+                <div className={classes.searchIcon}>
+                  <SearchIcon color="action" />
+                </div>
+                <InputBase
+                  autoFocus
+                  placeholder="Search foods..."
+                  classes={{
+                    root: classes.inputRoot,
+                    input: classes.inputInput
+                  }}
+                  inputProps={{
+                    "aria-label": "Search foods..."
+                  }}
+                  endAdornment={
+                    <div>
+                      {searchText ? foods ? null : <CircularProgress /> : null}
+                    </div>
+                  }
+                  inputRef={searchTextRef}
+                  value={searchText}
+                  onChange={handleSearchInput}
+                />
+                {foods ? (
+                  <Paper ref={searchItemRef} className={classes.searchList}>
+                    <SearchItems
+                      foods={foods.common}
+                      onClick={handleGetCommonFood}
+                      maxDisplay="5"
+                      title="common"
+                    />
+                    <Divider />
+                    <SearchItems
+                      foods={foods.branded}
+                      onClick={handleGetBrandedFood}
+                      maxDisplay="5"
+                      title="branded"
+                      subText={true}
+                    />
+                  </Paper>
+                ) : (
+                  ""
+                )}
               </div>
-              <InputBase
-                placeholder="Search foods..."
-                classes={{
-                  root: classes.inputRoot,
-                  input: classes.inputInput
-                }}
-                inputProps={{
-                  "aria-label": "Search foods..."
-                }}
-                value={searchText}
-                onChange={handleSearchInput}
-              />
-              {foods ? (
-                <Paper ref={searchItemRef} className={classes.searchList}>
-                  <SearchItems
-                    foods={foods.common}
-                    onClick={handleGetCommonFood}
-                    maxDisplay="5"
-                    title="common"
-                  />
-                  <Divider />
-                  <SearchItems
-                    foods={foods.branded}
-                    onClick={handleGetBrandedFood}
-                    maxDisplay="5"
-                    title="branded"
-                    subText={true}
-                  />
-                </Paper>
-              ) : (
-                ""
-              )}
-            </div>
-          </Grid>
-        </Grid>
-      </Toolbar>
-      <Hidden xsDown>
-        <SelectDate />
-      </Hidden>
-      <Hidden smUp>
-        <UserBasicInfo style={{ padding: 12 }} justify="space-between">
-          <Grid item sm={8}>
-            <Grid container justify="flex-start" alignItems="center">
-              <Avatar className={classes.avatar} src={Photo} />
-              <Typography style={{ paddingLeft: 10 }} variant="h6">
-                {user.first_name}
-              </Typography>
             </Grid>
           </Grid>
-          <Grid item sm={4}>
-            <Grid container alignItems="flex-end">
-              <Avatar className={classes.avatar}>
-                <span>{user.weight_kg}</span>
-                <span className={classes.avatarText}>kg</span>
-              </Avatar>
-              <Avatar className={classes.avatar}>
-                <span>{user.height_cm}</span>
-                <span className={classes.avatarText}>cm</span>
-              </Avatar>
+        </Toolbar>
+        <Hidden xsDown>
+          <SelectDate />
+        </Hidden>
+        <Hidden smUp>
+          <UserBasicInfo style={{ padding: 12 }} justify="space-between">
+            <Grid item sm={8}>
+              <Grid container justify="flex-start" alignItems="center">
+                <Avatar className={classes.avatar} src={Photo} />
+                <Typography style={{ paddingLeft: 10 }} variant="h6">
+                  {user.first_name}
+                </Typography>
+              </Grid>
             </Grid>
-          </Grid>
-        </UserBasicInfo>
-      </Hidden>
-    </AppBar>
+            <Grid item sm={4}>
+              <Grid container alignItems="flex-end">
+                <Avatar className={classes.avatar}>
+                  <span>{user.weight_kg}</span>
+                  <span className={classes.avatarText}>kg</span>
+                </Avatar>
+                <Avatar className={classes.avatar}>
+                  <span>{user.height_cm}</span>
+                  <span className={classes.avatarText}>cm</span>
+                </Avatar>
+              </Grid>
+            </Grid>
+          </UserBasicInfo>
+        </Hidden>
+      </AppBar>
+      <Fab
+        color="primary"
+        aria-label="add"
+        className={classes.fab}
+        onClick={() => {
+          searchTextRef.current.focus();
+        }}
+      >
+        <AddIcon />
+      </Fab>
+    </>
   );
 }
