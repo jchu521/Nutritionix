@@ -1,5 +1,3 @@
-/** @jsx jsx */
-import { jsx, css } from "@emotion/core";
 import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
@@ -17,6 +15,30 @@ const useStyles = makeStyles(theme => ({
   },
   boldText: {
     fontWeight: "bold"
+  },
+  percentage: {
+    transform: ({ details }) =>
+      `translateX(
+        ${
+          details.dailyPercentage > 90
+            ? details.dailyPercentage - 5
+            : details.dailyPercentage
+        }%
+      )`,
+    fontSize: 12,
+    [theme.breakpoints.down("sm")]: {
+      transform: ({ details }) =>
+        `translateX(
+        ${
+          details.dailyPercentage > 90
+            ? details.dailyPercentage - 10
+            : details.dailyPercentage
+        }%
+      )`
+    }
+  },
+  caloriesText: {
+    fontSize: "1.25rem"
   }
 }));
 
@@ -31,10 +53,9 @@ const initialDetails = {
 };
 
 export default function DailyCalories() {
-  const classes = useStyles();
-
-  const [{ user }] = useStateValue();
   const [details, setDetails] = useState(initialDetails);
+  const classes = useStyles({ details });
+  const [{ user }] = useStateValue();
 
   useEffect(() => {
     const dateDetails = user.data_points.find(
@@ -90,8 +111,12 @@ export default function DailyCalories() {
     <>
       <Grid item xs={12} className={classes.root}>
         <Grid container justify="space-between">
-          <Typography variant="h5">{details.totalCal} cal</Typography>
-          <Typography variant="h5">{user.daily_goal} cal</Typography>
+          <Typography className={classes.caloriesText} variant="h6">
+            {details.totalCal} cal
+          </Typography>
+          <Typography className={classes.caloriesText} variant="h5">
+            {user.daily_goal} cal
+          </Typography>
         </Grid>
         <Grid container justify="space-between">
           <Typography color="textSecondary" variant="caption">
@@ -104,15 +129,7 @@ export default function DailyCalories() {
       </Grid>
       <Grid item xs={12} style={{ padding: "8px 16px" }}>
         <LinearProgress variant="determinate" value={details.dailyPercentage} />
-        <div
-          css={css`
-            transform: translateX(
-              ${details.dailyPercentage - details.offsetPercentage}%
-            );
-            font-size: 12px;
-          `}>
-          {details.dailyPercentage} %
-        </div>
+        <div className={classes.percentage}>{details.dailyPercentage} %</div>
       </Grid>
       <Grid item xs={12}>
         <Grid container>

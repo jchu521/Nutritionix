@@ -35,7 +35,9 @@ const useStyles = makeStyles(theme => ({
 export default function SelectDate() {
   const classes = useStyles();
   const [{ user }, dispatch] = useStateValue();
-  const [dateIndex, setDateIndex] = useState(0);
+  const [dateIndex, setDateIndex] = useState(
+    user.data_points.findIndex(item => item.date === user.selectDate)
+  );
 
   const handleChangeDate = value => {
     if (value > 0) {
@@ -64,10 +66,12 @@ export default function SelectDate() {
           container
           justify="space-evenly"
           alignItems="center"
-          className={classes.dateContainer}>
+          className={classes.dateContainer}
+        >
           <IconButton
             className={classes.iconButton}
-            onClick={() => handleChangeDate(1)}>
+            onClick={() => handleChangeDate(1)}
+          >
             <LeftIcon />
           </IconButton>
           <Typography variant="h4" className={classes.dateText}>
@@ -76,7 +80,8 @@ export default function SelectDate() {
           <IconButton
             size="medium"
             className={classes.iconButton}
-            onClick={() => handleChangeDate(-1)}>
+            onClick={() => handleChangeDate(-1)}
+          >
             <RightIcon />
           </IconButton>
         </Grid>

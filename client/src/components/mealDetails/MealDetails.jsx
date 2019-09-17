@@ -13,13 +13,8 @@ import Avatar from "@material-ui/core/Avatar";
 const useStyles = makeStyles(theme => ({
   root: {
     width: "100%",
-    height: "90vh",
-    overflowY: "scroll",
-    backgroundColor: theme.palette.background.paper,
-    [theme.breakpoints.down("xs")]: {
-      maxHeight: 375,
-      overflowY: "scroll"
-    }
+    maxHeight: "85%",
+    overflowY: "scroll"
   },
   inline: {
     display: "inline"
@@ -32,14 +27,17 @@ const useStyles = makeStyles(theme => ({
 export default function MealDetails() {
   const [{ user }] = useStateValue();
   const [mealDetails, setMealDetails] = useState();
-  const classes = useStyles();
+  const [height, setHeight] = useState();
+  const classes = useStyles({ height });
 
   useEffect(() => {
     const details = user.data_points.filter(
       item => item.date === user.selectDate
     );
+    const newHeight = 75 * details[0].intake_list.length - 40;
+    setHeight(`${newHeight}px`);
     setMealDetails(details[0]);
-  }, [user]);
+  }, [user, height]);
 
   return (
     <List className={classes.root}>

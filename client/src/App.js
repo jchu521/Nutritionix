@@ -8,12 +8,7 @@ import MealDetails from "./components/mealDetails/MealDetails";
 
 import { StateProvider, initialState, reducer } from "./mockData/index";
 
-const useStyles = makeStyles(theme => ({
-  root: {},
-  body: {
-    // height: "100%"
-  }
-}));
+const useStyles = makeStyles(theme => ({}));
 
 function App() {
   const classes = useStyles();

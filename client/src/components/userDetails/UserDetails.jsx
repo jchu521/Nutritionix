@@ -22,7 +22,8 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.down("xs")]: {
       backgroundColor: "white",
       height: "100%",
-      borderRadius: 0
+      borderRadius: 0,
+      boxShadow: "none"
     }
   },
   smallAvatar: {
@@ -44,8 +45,8 @@ const useStyles = makeStyles(theme => ({
     width: 96,
     height: 96,
     [theme.breakpoints.down("sm")]: {
-      width: 100,
-      height: 100
+      width: 80,
+      height: 80
     }
   }
 }));
